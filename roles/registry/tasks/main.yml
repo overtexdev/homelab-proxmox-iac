@@ -1,0 +1,17 @@
+---
+- name: Créer le répertoire du service
+  ansible.builtin.file:
+    path: /opt/registry
+    state: directory
+    mode: "0755"
+
+- name: Déployer le docker-compose du registry
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/registry/docker-compose.yml
+    mode: "0644"
+
+- name: Lancer le registry
+  community.docker.docker_compose_v2:
+    project_src: /opt/registry
+    state: present

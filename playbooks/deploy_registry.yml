@@ -1,0 +1,6 @@
+---
+- name: Déployer le Docker Registry
+  hosts: docker-registry
+  gather_facts: true
+  roles:
+    - registry
