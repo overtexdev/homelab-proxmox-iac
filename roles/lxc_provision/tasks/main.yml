@@ -1,0 +1,40 @@
+---
+- name: Créer les conteneurs LXC
+  community.proxmox.proxmox:
+    api_host: "{{ proxmox_api_host }}"
+    api_user: "{{ proxmox_api_user }}"
+    api_token_id: "{{ proxmox_api_token_id }}"
+    api_token_secret: "{{ proxmox_api_token_secret }}"
+    node: "{{ proxmox_node }}"
+    validate_certs: false
+    vmid: "{{ item.vmid }}"
+    hostname: "{{ item.hostname }}"
+    ostemplate: "{{ lxc_template }}"
+    cores: "{{ item.cores }}"
+    memory: "{{ item.memory }}"
+    disk_volume:
+      storage: "{{ lxc_storage }}"
+      size: "{{ item.disk }}"
+    cmode: shell
+    netif: '{"net0":"name=eth0,bridge={{ lxc_bridge }},ip={{ item.ip }},gw={{ lxc_gateway }}"}'
+    onboot: true
+    unprivileged: true
+    features: "nesting=1"
+    state: present
+  loop: "{{ lxc_containers }}"
+  loop_control:
+    label: "{{ item.hostname }}"
+
+- name: Démarrer les conteneurs
+  community.proxmox.proxmox:
+    api_host: "{{ proxmox_api_host }}"
+    api_user: "{{ proxmox_api_user }}"
+    api_token_id: "{{ proxmox_api_token_id }}"
+    api_token_secret: "{{ proxmox_api_token_secret }}"
+    node: "{{ proxmox_node }}"
+    validate_certs: false
+    vmid: "{{ item.vmid }}"
+    state: started
+  loop: "{{ lxc_containers }}"
+  loop_control:
+    label: "{{ item.hostname }}"

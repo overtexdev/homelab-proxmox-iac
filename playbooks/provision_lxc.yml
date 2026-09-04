@@ -1,0 +1,7 @@
+---
+- name: Provisionner les LXC du homelab
+  hosts: pve
+  gather_facts: false
+  connection: local
+  roles:
+    - lxc_provision
