@@ -1,0 +1,6 @@
+---
+- name: Installer Docker dans les conteneurs
+  hosts: containers
+  gather_facts: true
+  roles:
+    - docker_setup

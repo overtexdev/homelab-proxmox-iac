@@ -1,7 +1,7 @@
 lxc_template: "local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst"
 lxc_storage: "local-lvm"
 lxc_bridge: "vmbr0"
-lxc_gateway: "192.168.1.1"
+lxc_gateway: "192.168.1.254"
 
 lxc_containers:
   - vmid: 101
