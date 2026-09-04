@@ -1,0 +1,6 @@
+---
+- name: Installer node_exporter sur Pi et Proxmox
+  hosts: exporters
+  gather_facts: true
+  roles:
+    - node_exporter

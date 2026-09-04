@@ -1,0 +1,23 @@
+---
+- name: Créer le répertoire du service
+  ansible.builtin.file:
+    path: /opt/monitoring
+    state: directory
+    mode: "0755"
+
+- name: Déployer la config Prometheus
+  ansible.builtin.template:
+    src: prometheus.yml.j2
+    dest: /opt/monitoring/prometheus.yml
+    mode: "0644"
+
+- name: Déployer le docker-compose du monitoring
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/monitoring/docker-compose.yml
+    mode: "0644"
+
+- name: Lancer le stack monitoring
+  community.docker.docker_compose_v2:
+    project_src: /opt/monitoring
+    state: present

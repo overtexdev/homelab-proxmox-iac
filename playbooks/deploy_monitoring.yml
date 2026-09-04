@@ -1,0 +1,9 @@
+---
+- name: Déployer le stack de monitoring
+  hosts: prometheus-grafana
+  gather_facts: true
+  vars:
+    proxmox_node_ip: "192.168.1.201"
+    pi_ip: "192.168.1.200"
+  roles:
+    - monitoring
