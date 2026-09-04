@@ -1,0 +1,27 @@
+name: CI - Validation Ansible
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: [self-hosted, homelab]
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Afficher les infos du runner
+        run: |
+          echo "Job exécuté sur : $(hostname)"
+          echo "Utilisateur : $(whoami)"
+
+      - name: Vérifier la syntaxe des playbooks
+        run: |
+          for pb in playbooks/*.yml; do
+            echo "=== Vérification de $pb ==="
+            docker run --rm -v "$PWD":/work -w /work \
+              cytopia/ansible:latest-tools \
+              ansible-playbook --syntax-check "$pb" -i inventory/hosts.yml || true
+          done
