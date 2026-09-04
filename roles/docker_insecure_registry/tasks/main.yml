@@ -1,0 +1,13 @@
+---
+- name: Configurer le registry insecure dans Docker
+  ansible.builtin.copy:
+    content: |
+      {
+        "insecure-registries": ["192.168.1.102:5000"]
+      }
+    dest: /etc/docker/daemon.json
+    mode: "0644"
+  notify: Redémarrer Docker
+
+- name: Handler inline - flush
+  ansible.builtin.meta: flush_handlers

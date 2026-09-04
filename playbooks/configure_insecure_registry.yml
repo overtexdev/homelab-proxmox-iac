@@ -1,0 +1,12 @@
+---
+- name: Autoriser le registry HTTP sur le runner
+  hosts: ci-runner
+  gather_facts: true
+  roles:
+    - docker_insecure_registry
+
+- name: Autoriser le registry HTTP sur le Pi
+  hosts: pi-host
+  gather_facts: true
+  roles:
+    - docker_insecure_registry
