@@ -1,0 +1,58 @@
+---
+- name: Créer l'utilisateur runner
+  ansible.builtin.user:
+    name: runner
+    shell: /bin/bash
+    system: true
+    home: /opt/actions-runner
+    create_home: true
+
+- name: Ajouter runner au groupe docker
+  ansible.builtin.user:
+    name: runner
+    groups: docker
+    append: true
+
+- name: Télécharger le runner GitHub Actions
+  ansible.builtin.get_url:
+    url: "https://github.com/actions/runner/releases/download/v{{ runner_version }}/actions-runner-linux-x64-{{ runner_version }}.tar.gz"
+    dest: /opt/actions-runner/runner.tar.gz
+    owner: runner
+    group: runner
+
+- name: Extraire le runner
+  ansible.builtin.unarchive:
+    src: /opt/actions-runner/runner.tar.gz
+    dest: /opt/actions-runner
+    remote_src: true
+    owner: runner
+    group: runner
+    creates: /opt/actions-runner/config.sh
+
+- name: Configurer le runner (enregistrement auprès de GitHub)
+  ansible.builtin.command:
+    cmd: >
+      ./config.sh --unattended
+      --url {{ github_url }}
+      --token {{ runner_token }}
+      --name {{ runner_name }}
+      --labels self-hosted,homelab
+      --replace
+    chdir: /opt/actions-runner
+    creates: /opt/actions-runner/.runner
+  become: true
+  become_user: runner
+  become_method: su
+
+- name: Installer le service systemd
+  ansible.builtin.template:
+    src: actions-runner.service.j2
+    dest: /etc/systemd/system/actions-runner.service
+    mode: "0644"
+
+- name: Activer et démarrer le runner
+  ansible.builtin.systemd:
+    name: actions-runner
+    enabled: true
+    state: started
+    daemon_reload: true

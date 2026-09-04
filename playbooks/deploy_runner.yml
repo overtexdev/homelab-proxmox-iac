@@ -1,0 +1,10 @@
+---
+- name: Déployer le runner GitHub Actions
+  hosts: ci-runner
+  gather_facts: true
+  vars:
+    runner_version: "2.319.1"
+    github_url: "https://github.com/overtexdev"
+    runner_name: "homelab-lxc-103"
+  roles:
+    - github_runner
